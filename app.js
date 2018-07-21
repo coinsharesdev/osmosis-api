@@ -88,6 +88,7 @@ app.use(passport.session());
 app.use(flash());
 app.use((req, res, next) => {
   if (req.path === '/oauth/token') return next()
+  if (req.path.match(/^\/api/)) return next()
   lusca.csrf()(req, res, next)
 });
 app.use(cors())
