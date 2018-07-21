@@ -276,6 +276,8 @@ exports.isAuthenticated = (req, res, next) => {
       }
 
       req.user = token.owner
+      req.locals.__apiKey = aes256.decrypt(req.token, req.user.profile.apiKey)
+      req.locals.__apiSecret = aes256.decrypt(req.token, req.user.profile.apiSecret)
       req.token = token
       next()
     })

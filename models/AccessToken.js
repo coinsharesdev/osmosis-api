@@ -7,7 +7,7 @@ const accessTokenSchema = new mongoose.Schema({
   accessTokenExpiresAt: { type: Date },
   apiKeyEncrypted: { type: String },
   apiSecretEncrypted: { type: String },
-  scope: { type: [ String ] }
+  scope: { type: String }
 }, { timestamps: true });
 
 const AccessToken = mongoose.model('AccessToken', accessTokenSchema);

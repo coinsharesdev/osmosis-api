@@ -48,6 +48,7 @@
     "popper.js": "^1.14.3",
     "pug": "^2.0.3",
     "request": "^2.87.0",
+    "request-promise": "^4.2.2",
     "sha256": "^0.2.0",
     "twit": "^2.2.11",
     "validator": "^10.4.0"
