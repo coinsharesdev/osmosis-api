@@ -60,7 +60,7 @@ exports.getAuthorize = (req, res, next) => {
       function isScopePresent(scope) {
         if (client.grants.indexOf(scope) > -1) return true
         if (scope.indexOf(':') == -1) return false
-        return isPresent(scope.split(':').slice(0, -1).join(':'))
+        return isScopePresent(scope.split(':').slice(0, -1).join(':'))
       }
 
       if (isInvalid) {
