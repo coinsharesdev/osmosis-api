@@ -18,6 +18,7 @@ const bearerToken = require('express-bearer-token');
 const passport = require('passport');
 const expressValidator = require('express-validator');
 const sass = require('node-sass-middleware');
+const cors = require('cors')
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -89,6 +90,7 @@ app.use((req, res, next) => {
   if (req.path === '/oauth/token') return next()
   lusca.csrf()(req, res, next)
 });
+app.use(cors())
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 app.disable('x-powered-by');
