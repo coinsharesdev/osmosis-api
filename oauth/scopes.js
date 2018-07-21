@@ -65,7 +65,7 @@ function parseTradeScope(pair, value) {
   return parsedScope
 }
 
-function parseTradeScope(resource, permission) {
+function parseOsmosisScope(resource, permission) {
   const parsedScope = {
     operation: 'osmosis',
     resource,
