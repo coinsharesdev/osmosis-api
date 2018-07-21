@@ -275,11 +275,13 @@ exports.isAuthenticated = (req, res, next) => {
         })
       }
 
+      req.locals = req.locals || {}
+      req.locals.__apiKey = aes256.decrypt(req.token, token.owner.profile.apiKey)
+      req.locals.__apiSecret = aes256.decrypt(req.token, token.owner.profile.apiSecret)
+
       req.user = token.owner
       req.token = token
-      req.locals = req.locals || {}
-      req.locals.__apiKey = aes256.decrypt(req.token, req.user.profile.apiKey)
-      req.locals.__apiSecret = aes256.decrypt(req.token, req.user.profile.apiSecret)
+
       next()
     })
 }
