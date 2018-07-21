@@ -1,0 +1,25 @@
+extends ../layout
+
+block content
+  .pb-2.mt-2.mb-4.border-bottom
+    h3 Authorize application
+  
+  .row: .col-md-8.offset-md-2
+    p #{client.name} wants the following access to your Bitfinex account:
+    ul
+      for scope in scopes
+        li= scope.definition
+
+    form(method='POST')
+      input(type='hidden', name='_csrf', value=_csrf)
+      input(type='hidden', name='client_id', value=query.client_id)
+      input(type='hidden', name='redirect_uri', value=query.redirect_uri)
+      input(type='hidden', name='scope', value=query.scope)
+      input(type='hidden', name='state', value=query.state)
+      .form-group
+        label.font-weight-bold(for='password') Password
+        input.form-control(type='password', name='password', id='password', placeholder='Osmosis Password')
+        p.form-text.text-danger: strong Your Osmosis password, not your Bitfinex password. Required if authorizing application.
+      .form-group.row.px-3
+        button.btn.btn-primary.mr-2.px-5(type='submit', value='allow', name='action') Authorize
+        button.btn.btn-danger.px-5(type='submit', value='deny', name='action') Deny

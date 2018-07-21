@@ -1,4 +1,4 @@
-@import "themes/default/variables";
+@import "themes/flatly/variables";
 
 @import "node_modules/bootstrap/scss/bootstrap";
 @import "node_modules/@ladjs/bootstrap-social/bootstrap-social.scss";
@@ -7,7 +7,7 @@
 @import "node_modules/@fortawesome/fontawesome-free/scss/fa-regular";
 @import "node_modules/@fortawesome/fontawesome-free/scss/fa-solid";
 
-@import "themes/default/default";
+@import "themes/flatly/flatly";
 
 // Scaffolding
 // -------------------------
@@ -18,7 +18,7 @@ html {
 }
 
 body {
-  padding-top: 80px;
+  padding-top: 60px;
   margin-bottom: 75px;
   font-size: 14px;
 }

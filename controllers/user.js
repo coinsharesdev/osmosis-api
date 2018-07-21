@@ -2,6 +2,7 @@ const { promisify } = require('util');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const passport = require('passport');
+const aes256 = require('aes256');
 const User = require('../models/User');
 
 const randomBytesAsync = promisify(crypto.randomBytes);
@@ -12,7 +13,7 @@ const randomBytesAsync = promisify(crypto.randomBytes);
  */
 exports.getLogin = (req, res) => {
   if (req.user) {
-    return res.redirect('/');
+    return res.redirect('/apps');
   }
   res.render('account/login', {
     title: 'Login'
@@ -43,7 +44,12 @@ exports.postLogin = (req, res, next) => {
     }
     req.logIn(user, (err) => {
       if (err) { return next(err); }
-      req.flash('success', { msg: 'Success! You are logged in.' });
+      if (!user.profile.apiKey) {
+        req.flash('info', { msg: 'You need to configure your Bitfinex API key to continue' });
+        return res.redirect('/account/key');
+      }
+
+      req.flash('success', { msg: 'Welcome back, you\'ve successfully signed in' });
       res.redirect(req.session.returnTo || '/');
     });
   })(req, res, next);
@@ -68,7 +74,7 @@ exports.logout = (req, res) => {
  */
 exports.getSignup = (req, res) => {
   if (req.user) {
-    return res.redirect('/');
+    return res.redirect('/apps');
   }
   res.render('account/signup', {
     title: 'Create Account'
@@ -109,7 +115,7 @@ exports.postSignup = (req, res, next) => {
         if (err) {
           return next(err);
         }
-        res.redirect('/');
+        res.redirect('/account/key');
       });
     });
   });
@@ -124,6 +130,52 @@ exports.getAccount = (req, res) => {
     title: 'Account Management'
   });
 };
+
+/**
+ * GET /account/key
+ * Configure bitfinex API key
+ */
+exports.getConfigureAPIKey = (req, res) => {
+  res.render('account/key', {
+    title: 'Bitfinex API'
+  });
+}
+
+/**
+ * POST /account/key
+ * Configure bitfinex API key
+ */
+exports.postConfigureAPIKey = (req, res) => {
+  req.assert('password', 'You must provide your account password').notEmpty();
+  req.assert('key', 'Please enter a valid API key').notEmpty();
+  req.assert('secret', 'Please enter a valid API secret').notEmpty();
+
+  const errors = req.validationErrors();
+  const password = req.body.password;
+
+  if (errors) {
+    req.flash('errors', errors);
+    return res.redirect('/account/key');
+  }
+
+  req.user.comparePassword(password, (err, isMatch) => {
+    if (err) return next(err)
+    if (!isMatch) {
+      req.flash('errors', { msg: `Incorrect password, please try again` })
+      return res.redirect('/account/key')
+    }
+
+    req.user.profile.apiKey = aes256.encrypt(password, req.body.key);
+    req.user.profile.apiSecret = aes256.encrypt(password, req.body.secret);
+
+    req.user.save((err) => {
+      if (err) return next(err)
+
+      req.flash('success', { msg: 'Your Bitfinex key has been added. You can now sign in using Osmosis to authorize access to your account' });
+      res.redirect('/apps');
+    })
+  })
+}
 
 /**
  * POST /account/profile
@@ -144,9 +196,7 @@ exports.postUpdateProfile = (req, res, next) => {
     if (err) { return next(err); }
     user.email = req.body.email || '';
     user.profile.name = req.body.name || '';
-    user.profile.gender = req.body.gender || '';
-    user.profile.location = req.body.location || '';
-    user.profile.website = req.body.website || '';
+    user.profile.apiKey = req.body.key || '';
     user.save((err) => {
       if (err) {
         if (err.code === 11000) {
@@ -201,30 +251,12 @@ exports.postDeleteAccount = (req, res, next) => {
 };
 
 /**
- * GET /account/unlink/:provider
- * Unlink OAuth provider.
- */
-exports.getOauthUnlink = (req, res, next) => {
-  const { provider } = req.params;
-  User.findById(req.user.id, (err, user) => {
-    if (err) { return next(err); }
-    user[provider] = undefined;
-    user.tokens = user.tokens.filter(token => token.kind !== provider);
-    user.save((err) => {
-      if (err) { return next(err); }
-      req.flash('info', { msg: `${provider} account has been unlinked.` });
-      res.redirect('/account');
-    });
-  });
-};
-
-/**
  * GET /reset/:token
  * Reset Password page.
  */
 exports.getReset = (req, res, next) => {
   if (req.isAuthenticated()) {
-    return res.redirect('/');
+    return res.redirect('/apps');
   }
   User
     .findOne({ passwordResetToken: req.params.token })
@@ -309,7 +341,7 @@ exports.postReset = (req, res, next) => {
  */
 exports.getForgot = (req, res) => {
   if (req.isAuthenticated()) {
-    return res.redirect('/');
+    return res.redirect('/apps');
   }
   res.render('account/forgot', {
     title: 'Forgot Password'

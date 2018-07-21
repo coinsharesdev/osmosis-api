@@ -1,0 +1,31 @@
+extends ../layout
+
+block content
+  .pb-2.mt-2.mb-4.border-bottom
+    h3 Manage Client
+  form(method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='name') Name
+      .col-md-7
+        input.form-control(type='text', name='name', id='name', placeholder='Name', autofocus, required, value=`${client.name}`)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='id') Client ID
+      .col-md-7
+        input.form-control(type='text', value=`${client._id}`, readonly)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='secret') Client Secret
+      .col-md-7
+        input.form-control(type='text', value=`${client.secret}`, readonly)
+    .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right(for='redirectUris') Redirect URIs
+      .col-md-7
+        input.form-control(type='text', name='redirectUris', id='redirectUris', placeholder='https://myapp.com/example, https://anotherapp.com/example', required, value=`${client.redirectUris.join(', ')}`)
+    .form-group.offset-sm-3.col-md-7.pl-2
+      button.btn.btn-success(type='submit') Update Client
+  hr
+  form(method='POST', action=`/clients/${client._id}/secret`)
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group.offset-sm-3.col-md-7.pl-2
+      button.btn.btn-danger(type='submit') Regenerate Secret
+  
