@@ -264,7 +264,7 @@ exports.isAuthenticated = (req, res, next) => {
     .findOne({
       accessTokenHash: sha256(req.token)
     })
-    .populate('client')
+    .populate('owner')
     .exec((err, token) => {
       if (err) return next(err)
       if (!token) {
@@ -275,7 +275,7 @@ exports.isAuthenticated = (req, res, next) => {
         })
       }
 
-      req.user = token.client
+      req.user = token.owner
       req.token = token
       next()
     })
