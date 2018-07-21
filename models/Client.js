@@ -6,7 +6,7 @@ const clientSchema = new mongoose.Schema({
   secret: { type: String },
   name: { type: String },
   scope: { type: [ String ] },
-  grants: { type: [ String ] },
+  grants: { type: [ String ], default: [ 'osmosis:user:read', 'trade' ] },
   redirectUris: { type: [ String ] },
   accessTokenLifetime: { type: Number, default: 7200 },
   refreshTokenLifetime: { type: Number, default: 3600 * 24 * 30 }

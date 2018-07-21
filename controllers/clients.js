@@ -121,7 +121,10 @@ exports.postNewClient = (req, res, next) => {
     return res.redirect('/clients/new');
   }
 
-  const redirectUris = req.body.redirectUris.split(',').map(item => item.trim())
+  const redirectUris = req.body.redirectUris
+    .split(',')
+    .map(item => new URL(item).origin)
+
   const client = new Client({
     owner: req.user.id,
     name: req.body.name,

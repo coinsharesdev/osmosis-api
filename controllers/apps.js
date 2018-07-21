@@ -3,7 +3,9 @@
  * List of apps user has authenticated
  */
 exports.getApps = (req, res, next) => {
- 
+  res.render('apps/list', {
+    title: 'Your Apps'
+  })
 };
 
 /**

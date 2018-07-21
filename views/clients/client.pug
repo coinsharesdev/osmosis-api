@@ -18,6 +18,10 @@ block content
       .col-md-7
         input.form-control(type='text', value=`${client.secret}`, readonly)
     .form-group.row
+      label.col-md-3.col-form-label.font-weight-bold.text-right Grants
+      .col-md-7
+        input.form-control(type='text', value=client.grants.join(', '), readonly)
+    .form-group.row
       label.col-md-3.col-form-label.font-weight-bold.text-right(for='redirectUris') Redirect URIs
       .col-md-7
         input.form-control(type='text', name='redirectUris', id='redirectUris', placeholder='https://myapp.com/example, https://anotherapp.com/example', required, value=`${client.redirectUris.join(', ')}`)
