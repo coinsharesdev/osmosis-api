@@ -54,6 +54,15 @@ userSchema.methods.gravatar = function gravatar(size) {
   return `https://gravatar.com/avatar/${md5}?s=${size}&d=retro`;
 };
 
+userSchema.methods.toJSON = function toJSON() {
+  var user = this.toObject();
+  delete user.profile.apiKey;
+  delete user.profile.apiSecret;
+  delete user.password;
+  delete user.__v;
+  return user;
+};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

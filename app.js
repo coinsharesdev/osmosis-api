@@ -32,6 +32,7 @@ const userController = require('./controllers/user');
 const clientController = require('./controllers/clients');
 const appController = require('./controllers/apps');
 const oauthController = require('./controllers/oauth');
+const bitfinexController = require('./controllers/bitfinex');
 
 
 /**
@@ -149,6 +150,7 @@ app.post('/oauth/authorize', passportConfig.isAuthenticated, oauthController.pos
 app.post('/oauth/token', oauthController.postToken)
 
 app.get('/api/osmosis/user', oauthController.isAuthenticated, oauthController.getProfile)
+app.all(/api\/bitfinex\/.+/gi, oauthController.isAuthenticated, bitfinexController.proxy)
 
 /**
  * Error Handler.
