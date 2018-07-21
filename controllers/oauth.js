@@ -190,6 +190,7 @@ exports.postToken = (req, res, next) => {
       redirectUri: req.body.redirect_uri,
       used: false
     })
+    .populate('client')
     .exec((err, token) => {
       if (err) return next(err)
       if (!token) return res.status(400).json({ error: { msg: 'provided code is invalid' }})
@@ -213,8 +214,9 @@ exports.postToken = (req, res, next) => {
       // create access token
       const accessTokenObj = new AccessToken({
         owner: token.owner,
-        client: token.client,
+        client: token.client._id,
         accessTokenHash: sha256(accessToken),
+        accessTokenExpiresAt: moment().add(token.client.accessTokenLifetime, 'seconds'),
         scope: token.scope,
         apiKeyEncrypted: apiKey,
         apiSecretEncrypted: apiSecret
@@ -224,6 +226,7 @@ exports.postToken = (req, res, next) => {
       const refreshTokenObj = new RefreshToken({
         accessTokenHash: sha256(accessToken),
         refreshTokenHash: sha256(refreshToken),
+        refreshTokenExpiresAt: moment().add(token.client.refreshTokenLifetime, 'seconds'),
         apiKeyEncrypted: refreshApiKey,
         apiSecretEncrypted: refreshApiSecret
       })
@@ -244,4 +247,40 @@ exports.postToken = (req, res, next) => {
           })
       })
     })
+}
+
+
+exports.isAuthenticated = (req, res, next) => {
+  if (!req.token) {
+    return res.status(400).json({
+      error: {
+        msg: 'no auth token provided'
+      }
+    })
+  }
+
+  AccessToken
+    .findOne({
+      accessTokenHash: sha256(req.token)
+    })
+    .populate('client')
+    .exec((err, token) => {
+      if (err) return next(err)
+      if (!token) {
+        return res.status(400).json({
+          error: {
+            msg: 'auth token is invalid'
+          }
+        })
+      }
+
+      req.user = token.client
+      req.token = token
+      next()
+    })
+}
+
+
+exports.getProfile = (req, res, next) => {
+  res.json(req.user)
 }

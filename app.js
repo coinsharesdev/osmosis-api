@@ -14,6 +14,7 @@ const MongoStore = require('connect-mongo')(session);
 const flash = require('express-flash');
 const path = require('path');
 const mongoose = require('mongoose');
+const bearerToken = require('express-bearer-token');
 const passport = require('passport');
 const expressValidator = require('express-validator');
 const sass = require('node-sass-middleware');
@@ -65,6 +66,7 @@ app.use(sass({
   src: path.join(__dirname, 'public'),
   dest: path.join(__dirname, 'public')
 }));
+app.use(bearerToken());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -145,6 +147,8 @@ app.get('/apps/:id', passportConfig.isAuthenticated, appController.getAppById)
 app.get('/oauth/authorize', passportConfig.isAuthenticated, oauthController.getAuthorize)
 app.post('/oauth/authorize', passportConfig.isAuthenticated, oauthController.postAuthorize)
 app.post('/oauth/token', oauthController.postToken)
+
+app.get('/api/osmosis/user', oauthController.isAuthenticated, oauthController.getProfile)
 
 /**
  * Error Handler.
