@@ -1,4 +1,5 @@
 const request = require('request-promise')
+const crypto = require('crypto')
 
 function routeIsAuthenticated(method, url) {
   if (method === 'POST') return true
