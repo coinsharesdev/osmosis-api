@@ -1,5 +1,5 @@
 
-function parseTradeScope(pair, value) {
+function parseTradeScope(pair, values) {
   const parsedScope = {
     operation: 'trade',
     pairA: null,
