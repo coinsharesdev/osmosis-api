@@ -1,11 +1,25 @@
+const AccessToken = require('../models/AccessToken')
+
 /**
  * GET /apps
  * List of apps user has authenticated
  */
 exports.getApps = (req, res, next) => {
-  res.render('apps/list', {
-    title: 'Your Apps'
-  })
+
+  AccessToken
+    .find({
+      owner: req.user.id,
+    })
+    .populate('')
+    .exec((err, apps) => {
+
+      res.render('apps/list', {
+        title: 'Your Apps',
+        apps
+      })
+
+    })
+  
 };
 
 /**

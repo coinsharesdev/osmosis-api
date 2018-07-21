@@ -6,7 +6,7 @@ function routeIsAuthenticated(method, url) {
 }
 
 exports.proxy = (req, res, next) => {
-  const baseUrl = `https://api.bitfinex.com`
+  const baseUrl = `https://hackathon.bitfinex.com`
   const requestUrl = req.originalUrl.replace('/api/bitfinex/', '/') 
   const data = {
     json: true,
@@ -35,8 +35,10 @@ exports.proxy = (req, res, next) => {
     data.headers['X-BFX-SIGNATURE'] = signature
   }
 
-  request(data).then(response => {
-    res.json(response)
+  console.log(data)
+  request(data).then(response => {   
+    console.log(response)
+    res.pipe(response)
   })
    
 }
