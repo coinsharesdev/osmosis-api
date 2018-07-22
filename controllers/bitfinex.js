@@ -1,5 +1,6 @@
 const request = require('request-promise')
 const crypto = require('crypto')
+const { isOperationAllowed } = require('../oauth/scopes')
 
 function routeIsAuthenticated(method, url) {
   if (method === 'POST') return true
@@ -66,13 +67,21 @@ function getRequiredScope(method, url) {
 }
 
 exports.proxy = (req, res, next) => {
-  console.log(req.token)
-
   const baseUrl = `https://hackathon.bitfinex.com`
   const requestUrl = req.originalUrl.replace('/api/bitfinex/', '/') 
   const requestScope = getRequiredScope(req.method, requestUrl)
 
-  console.log(requestScope)
+  console.log('GOT REQUEST - ' + requestUrl)
+  
+  const isAllowed = isOperationAllowed(requestScope, req.token.scope)
+  
+  if (!isAllowed) {
+    return res.status(400).json({
+      error: {
+        msg: `you must have the ${requestScope} scope to make this request`
+      }
+    })
+  }
 
   const data = {
     json: true,

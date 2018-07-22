@@ -47,5 +47,17 @@ exports.isScopeValid = (scope, grants) => {
   return cleaned.map(item => isPresent(item)).indexOf(false) === -1
 }
 
+exports.isOperationAllowed = (required, users) => {
+  users = users.split(' ')
+
+  function isPresent(requiredScope) {
+    if (users.indexOf(requiredScope) > -1) return true
+    if (requiredScope.indexOf(':') == -1) return false
+    return isPresent(requiredScope.split(':').slice(0, -1).join(':'))
+  }
+  
+  return isPresent(required)
+}
+
 
 
