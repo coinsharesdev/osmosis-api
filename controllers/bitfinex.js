@@ -94,16 +94,13 @@ exports.proxy = (req, res, next) => {
     }
   }
 
-  if (data.method === 'POST') {
-    data.formData = JSON.parse(JSON.stringify(req.body))
-  }
-
   if(routeIsAuthenticated(req.method, requestUrl)) {
     const nonce = Date.now().toString()
-    const body = {
+    const body = Object.assign({}, {
       request: requestUrl,
       nonce
-    }
+    }, JSON.parse(JSON.stringify(req.body)))
+
     const payload = new Buffer(JSON.stringify(body)).toString('base64')
     const signature = crypto.createHmac('sha384', req.locals.__apiSecret).update(payload).digest('hex')
 
