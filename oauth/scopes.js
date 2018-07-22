@@ -48,10 +48,11 @@ exports.isScopeValid = (scope, grants) => {
 }
 
 exports.isOperationAllowed = (required, users) => {
-  users = users.split(' ')
+  let paramRegex = /\((.+?)\)/gi
+  let _users = users.split(' ').map(item => item.replace(paramRegex, ''))
 
   function isPresent(requiredScope) {
-    if (users.indexOf(requiredScope) > -1) return true
+    if (_users.indexOf(requiredScope) > -1) return true
     if (requiredScope.indexOf(':') == -1) return false
     return isPresent(requiredScope.split(':').slice(0, -1).join(':'))
   }
