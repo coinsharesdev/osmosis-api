@@ -31,8 +31,6 @@ exports.getAuthorize = (req, res, next) => {
 
   let { client_id, redirect_uri, scope } = req.query
 
-  console.log(client_id)
-
   Client
     .findById(client_id)
     .exec((err, client) => {
