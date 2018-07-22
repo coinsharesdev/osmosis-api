@@ -1,4 +1,5 @@
-const { URL } = require('url');
+const url = require('url');
+const { URL } = url;
 const aes256 = require('aes256');
 const sha256 = require('sha256');
 const crypto = require('crypto');

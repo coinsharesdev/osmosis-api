@@ -74,14 +74,16 @@ exports.proxy = (req, res, next) => {
   console.log('GOT REQUEST - ' + requestUrl)
   console.log('DATA - ' + JSON.stringify(req.body, null, 2))
 
-  const isAllowed = isOperationAllowed(requestScope, req.token.scope)
+  if (requestScope) {
+    const isAllowed = isOperationAllowed(requestScope, req.token.scope)
   
-  if (!isAllowed) {
-    return res.status(400).json({
-      error: {
-        msg: `you must have the ${requestScope} scope to make this request`
-      }
-    })
+    if (!isAllowed) {
+      return res.status(400).json({
+        error: {
+          msg: `you must have the ${requestScope} scope to make this request`
+        }
+      })
+    }
   }
 
   const data = {
