@@ -153,7 +153,8 @@ app.post('/oauth/authorize', passportConfig.isAuthenticated, oauthController.pos
 app.post('/oauth/token', oauthController.postToken)
 
 app.get('/api/osmosis/user', oauthController.isAuthenticated, oauthController.getProfile)
-app.all(/\/api\/bitfinex\/v1\/.+/gi, oauthController.isAuthenticated, bitfinexController.proxy)
+app.get(/\/api\/bitfinex\/v1\/.+/gi, oauthController.isAuthenticated, bitfinexController.proxy)
+app.post(/\/api\/bitfinex\/v1\/.+/gi, oauthController.isAuthenticated, bitfinexController.proxy)
 
 /**
  * Error Handler.
