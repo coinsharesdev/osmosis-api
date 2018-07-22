@@ -64,7 +64,7 @@ exports.getAuthorize = (req, res, next) => {
 
       res.render('oauth/authorize', {
         title: 'OAuth Authorize',
-        scopes: scope.split(','),
+        scopes: scope.split(' '),
         query: req.query,
         client
       })

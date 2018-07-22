@@ -36,7 +36,7 @@ exports.scopeParser = (item) => {
 exports.isScopeValid = (scope, grants) => {
   // Remove brackets
   let paramRegex = /\((.+?)\)/gi
-  let cleaned = scope.split(',').map(item => item.replace(paramRegex, ''))
+  let cleaned = scope.split(' ').map(item => item.replace(paramRegex, ''))
 
   function isPresent(scope) {
     if (grants.indexOf(scope) > -1) return true
