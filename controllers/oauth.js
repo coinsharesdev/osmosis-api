@@ -31,8 +31,10 @@ exports.getAuthorize = (req, res, next) => {
 
   let { client_id, redirect_uri, scope } = req.query
 
+  console.log(client_id)
+
   Client
-    .findById(req.query.client_id)
+    .findById(client_id)
     .exec((err, client) => {
       if (err) return next(err)
 
@@ -276,8 +278,8 @@ exports.isAuthenticated = (req, res, next) => {
       }
 
       req.locals = req.locals || {}
-      req.locals.__apiKey = aes256.decrypt(req.token, token.owner.profile.apiKey)
-      req.locals.__apiSecret = aes256.decrypt(req.token, token.owner.profile.apiSecret)
+      req.locals.__apiKey = aes256.decrypt(req.token, token.apiKeyEncrypted)
+      req.locals.__apiSecret = aes256.decrypt(req.token, token.apiSecretEncrypted)
 
       req.user = token.owner
       req.token = token
