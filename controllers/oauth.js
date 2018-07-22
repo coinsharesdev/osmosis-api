@@ -8,7 +8,7 @@ const Client = require('../models/Client')
 const AuthToken = require('../models/AuthToken')
 const AccessToken = require('../models/AccessToken')
 const RefreshToken = require('../models/RefreshToken')
-const { scopeParser } = require('../oauth/scopes')
+const { scopeParser, isScopeValid } = require('../oauth/scopes')
 
 /**
  * GET /oauth/authorize
@@ -54,17 +54,8 @@ exports.getAuthorize = (req, res, next) => {
       }
 
       // validate scope
-      scope = scope.split(',')
-      const parsedScope = scope.map(scopeParser)
-      const isInvalid = (scope.map(item => isScopePresent(item)).indexOf(false) > -1)
-
-      function isScopePresent(scope) {
-        if (client.grants.indexOf(scope) > -1) return true
-        if (scope.indexOf(':') == -1) return false
-        return isScopePresent(scope.split(':').slice(0, -1).join(':'))
-      }
-
-      if (isInvalid) {
+      const isValid = isScopeValid(scope, client.grants)
+      if (!isValid) {
         req.flash('errors', { msg: `scope not valid for application` })
         return res.render('oauth/error', {
           title: 'Application Error'
@@ -73,7 +64,7 @@ exports.getAuthorize = (req, res, next) => {
 
       res.render('oauth/authorize', {
         title: 'OAuth Authorize',
-        scopes: parsedScope,
+        scopes: scope.split(','),
         query: req.query,
         client
       })

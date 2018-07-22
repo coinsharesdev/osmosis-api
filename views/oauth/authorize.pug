@@ -8,7 +8,7 @@ block content
     p #{client.name} wants the following access to your Bitfinex and/or Osmosis account:
     ul
       for scope in scopes
-        li= scope.definition
+        li= scope
 
     form(method='POST')
       input(type='hidden', name='_csrf', value=_csrf)
