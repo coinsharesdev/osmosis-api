@@ -78,6 +78,7 @@ exports.proxy = (req, res, next) => {
     json: true,
     method: req.method,
     uri: baseUrl + requestUrl,
+    proxy: process.env.FIXIE_URL,
     headers: {
       'X-Forwarded-For': req.get('CF-Connecting-IP')
     }
