@@ -72,7 +72,8 @@ exports.proxy = (req, res, next) => {
   const requestScope = getRequiredScope(req.method, requestUrl)
 
   console.log('GOT REQUEST - ' + requestUrl)
-  
+  console.log('DATA - ' + JSON.stringify(req.body, null, 2))
+
   const isAllowed = isOperationAllowed(requestScope, req.token.scope)
   
   if (!isAllowed) {
