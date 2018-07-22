@@ -49,15 +49,25 @@ exports.isScopeValid = (scope, grants) => {
 
 exports.isOperationAllowed = (required, users) => {
   let paramRegex = /\((.+?)\)/gi
-  let _users = users.split(' ').map(item => item.replace(paramRegex, ''))
+  let originalScopes = users.split(' ')
+  let _users = originalScopes.map(item => item.replace(paramRegex, ''))
 
   function isPresent(requiredScope) {
-    if (_users.indexOf(requiredScope) > -1) return true
+    itemIndex = _users.indexOf(requiredScope)
+    if (itemIndex > -1) return originalScopes[itemIndex]
     if (requiredScope.indexOf(':') == -1) return false
     return isPresent(requiredScope.split(':').slice(0, -1).join(':'))
   }
   
   return isPresent(required)
+}
+
+exports.mergeParams = (scope) => {
+  let params = {}
+  scope.forEach(item => {
+    params = Object.assign({}, item.params)
+  })
+  return params
 }
 
 

@@ -1,6 +1,6 @@
 const request = require('request-promise')
 const crypto = require('crypto')
-const { isOperationAllowed } = require('../oauth/scopes')
+const { isOperationAllowed, scopeParser, mergeParams } = require('../oauth/scopes')
 
 function routeIsAuthenticated(method, url) {
   if (method === 'POST') return true
@@ -75,15 +75,29 @@ exports.proxy = (req, res, next) => {
   console.log('DATA - ' + JSON.stringify(req.body, null, 2))
 
   if (requestScope) {
-    const isAllowed = isOperationAllowed(requestScope, req.token.scope)
-  
-    if (!isAllowed) {
+    const matchedScope = isOperationAllowed(requestScope, req.token.scope)
+    const parsedScope = scopeParser(matchedScope)
+    const params = mergeParams(parsedScope)
+
+    if (!matchedScope) {
       return res.status(400).json({
         error: {
           msg: `you must have the ${requestScope} scope to make this request`
         }
       })
     }
+
+    if (params.pair) {
+      params.pair = params.pair.toLowerCase()
+      req.assert('symbol', 'this token does not have access to that symbol pair').equals(params.pair)
+    }
+
+    const errors = req.validationErrors();
+
+    if (errors) {
+      return res.status(400).json({ errors })
+    }
+
   }
 
   const data = {
