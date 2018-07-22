@@ -9,8 +9,12 @@ exports.getApps = (req, res, next) => {
   AccessToken
     .find({
       owner: req.user.id,
+      accessTokenExpiresAt: {
+        $gte: new Date()
+      }
     })
-    .populate('')
+    .sort('-createdAt')
+    .populate('client')
     .exec((err, apps) => {
 
       res.render('apps/list', {

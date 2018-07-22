@@ -19,6 +19,7 @@ const passport = require('passport');
 const expressValidator = require('express-validator');
 const sass = require('node-sass-middleware');
 const cors = require('cors')
+const moment = require('moment')
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -97,6 +98,7 @@ app.use(lusca.xssProtection(true));
 app.disable('x-powered-by');
 app.use((req, res, next) => {
   res.locals.user = req.user;
+  res.locals.moment = moment;
   next();
 });
 app.use((req, res, next) => {

@@ -3,3 +3,21 @@ extends ../layout
 block content
   .pb-2.mt-2.mb-4.border-bottom
     h3 Your Apps
+
+  .row
+    for app in apps
+      .col-md-3
+        .card: .card-body
+          h5.card-title #{app.client.name}
+          h6.card-subtitle.mb-2.text-muted created #{moment(app.createdAt).fromNow()}
+          .form-group
+            label Scope
+            input.form-control(type='text', readonly, value=app.scope)
+          .form-group
+            label Token Hash
+            input.form-control(type='text', readonly, value=app.accessTokenHash)
+          .form-group
+            label Expires
+            input.form-control(type='text', readonly, value=moment(app.accessTokenExpiresAt).fromNow())
+          a.card-link(href=`/apps/${app._id}`) Details
+          a.card-link.text-danger(href=`/apps/${app._id}/revoke`) Revoke
